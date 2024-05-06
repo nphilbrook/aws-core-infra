@@ -2,7 +2,8 @@
 # to AWS with the permissions set in the AWS policy.
 #
 resource "tfe_variable_set" "aws_variable_set" {
-  name = var.tfc_variable_set_name
+  name   = var.tfc_variable_set_name
+  global = true
 }
 
 # The following variables must be set to allow runs
