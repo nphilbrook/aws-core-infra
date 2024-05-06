@@ -13,7 +13,7 @@ resource "aws_vpc_security_group_ingress_rule" "ssh" {
   to_port     = 22
 }
 
-resource "aws_vpc_security_group_ingress_rule" "ssh" {
+resource "aws_vpc_security_group_ingress_rule" "https" {
   security_group_id = aws_security_group.allow_all.id
 
   cidr_ipv4   = "0.0.0.0/0"
