@@ -61,3 +61,102 @@ module "acm" {
   zone_id           = aws_route53_zone.primary.id
   validation_method = "DNS"
 }
+
+module "alb" {
+  source  = "terraform-aws-modules/alb/aws"
+  version = "~>9.9.0"
+
+  name    = local.subdomain
+  enable_deletion_protection = false
+
+  # Security Group
+  security_group_ingress_rules = {
+    all_http = {
+      from_port   = 80
+      to_port     = 80
+      ip_protocol = "tcp"
+      description = "HTTP web traffic"
+      cidr_ipv4   = "0.0.0.0/0"
+    }
+    all_https = {
+      from_port   = 443
+      to_port     = 443
+      ip_protocol = "tcp"
+      description = "HTTPS web traffic"
+      cidr_ipv4   = "0.0.0.0/0"
+    }
+  }
+  security_group_egress_rules = {
+    all = {
+      ip_protocol = "-1"
+      cidr_ipv4   = "0.0.0.0/0"
+    }
+  }
+
+  listeners = {
+    fixed-response = {
+      port     = 80
+      protocol = "HTTP"
+      fixed_response = {
+        content_type = "text/plain"
+        message_body = "Hella World\n"
+        status_code  = "200"
+      }
+    }
+
+    tfe-https = {
+      port                        = 443
+      protocol                    = "HTTPS"
+      ssl_policy                  = "ELBSecurityPolicy-TLS13-1-2-Res-2021-06"
+      certificate_arn             = module.acm.acm_certificate_arn
+
+      forward = {
+        target_group_key = "tfe"
+      }
+
+      rules = {
+        fixed-response = {
+          actions = [{
+            type         = "fixed-response"
+            content_type = "text/plain"
+            status_code  = 200
+            message_body = "Hella World but secure\n"
+          }]
+
+          conditions = [{
+            http_header = {
+              http_header_name = "x-Gimme-Fixed-Response"
+              values           = ["yes", "please", "right now"]
+            }
+          }]
+        }
+      }
+    }
+  }
+  target_groups = {
+    "tfe" = {
+      target_type       = "ip"
+      target_id         = aws_instance.tfe.private_ip
+      name_prefix       = "tfe-"
+      protocol          = "HTTP"
+      port              = 443
+      create_attachment = false
+      # health_check = {
+      #   enabled  = true
+      #   interval = 30
+      #   path     = "/health"
+      #   protocol = "HTTP"
+      #   matcher  = "200"
+      # }
+    }
+  }
+
+  # Route53 Record(s)
+  route53_records = {
+    A = {
+      name    = "tfe.${local.subdomain}"
+      type    = "A"
+      zone_id = aws_route53_zone.primary.id
+    }
+  }
+}
