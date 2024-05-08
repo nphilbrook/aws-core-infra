@@ -15,6 +15,14 @@ terraform {
       version = "~>0.53"
     }
   }
+  cloud {
+    organization = "philbrook"
+
+    workspaces {
+      name    = "tfe-scratch"
+      project = "Default Project"
+    }
+  }
 }
 
 locals {

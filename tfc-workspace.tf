@@ -1,3 +1,7 @@
+import {
+  to = tfe_variable_set.aws_variable_set
+  id = "varset-pDJjiY2SFqagYQ3p"
+}
 # Runs with this variable set will be automatically authenticated
 # to AWS with the permissions set in the AWS policy.
 #
@@ -6,6 +10,10 @@ resource "tfe_variable_set" "aws_variable_set" {
   global = true
 }
 
+import {
+  to = tfe_variable.enable_aws_provider_auth
+  id = "var-ougC3NRWvytGH1cU"
+}
 # The following variables must be set to allow runs
 # to authenticate to AWS.
 #
@@ -20,6 +28,10 @@ resource "tfe_variable" "enable_aws_provider_auth" {
   description = "Enable the Workload Identity integration for AWS."
 }
 
+import {
+  to = tfe_variable.tfc_aws_role_arn
+  id = "var-gA8qWC2xgnKzxd5X"
+}
 resource "tfe_variable" "tfc_aws_role_arn" {
   variable_set_id = tfe_variable_set.aws_variable_set.id
 
