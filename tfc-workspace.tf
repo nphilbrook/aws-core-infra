@@ -12,7 +12,7 @@ resource "tfe_variable_set" "aws_variable_set" {
 
 import {
   to = tfe_variable.enable_aws_provider_auth
-  id = "philbrook/var-gA8qWC2xgnKzxd5X/var-ougC3NRWvytGH1cU"
+  id = "philbrook/varset-pDJjiY2SFqagYQ3p/var-ougC3NRWvytGH1cU"
 }
 # The following variables must be set to allow runs
 # to authenticate to AWS.
@@ -30,7 +30,7 @@ resource "tfe_variable" "enable_aws_provider_auth" {
 
 import {
   to = tfe_variable.tfc_aws_role_arn
-  id = "philbrook/var-gA8qWC2xgnKzxd5X/var-gA8qWC2xgnKzxd5X"
+  id = "philbrook/varset-pDJjiY2SFqagYQ3p/var-gA8qWC2xgnKzxd5X"
 }
 resource "tfe_variable" "tfc_aws_role_arn" {
   variable_set_id = tfe_variable_set.aws_variable_set.id
