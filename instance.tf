@@ -41,10 +41,13 @@ resource "aws_instance" "tfe" {
     owner = "nick.philbrook@hashicorp.com",
     TTL   = 0
   }
+  lifecycle {
+    ignore_changes = [ami]
+  }
 }
 
 locals {
-  subdomain      = "dev.exceptbuses.com"
+  subdomain = "dev.exceptbuses.com"
 }
 
 # NOTE - delegation must be set up manually on dns.he.net

@@ -27,7 +27,7 @@ terraform {
 
 locals {
   tags_labels = {
-    "created-by" = "terraform",
+    "created-by"       = "terraform",
     "source-workspace" = terraform.workspace
   }
 }
