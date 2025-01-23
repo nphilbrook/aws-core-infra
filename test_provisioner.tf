@@ -18,11 +18,12 @@ resource "aws_instance" "test" {
     user        = "ec2-user"
     private_key = var.ssh_private_key
     host        = self.public_ip
+    script_path = "/home/ec2-user"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "echo LOBSTER >> /home/ec2-user/lobster"
+      "echo LOBSTER 2 >> /home/ec2-user/lobster"
     ]
   }
 }
