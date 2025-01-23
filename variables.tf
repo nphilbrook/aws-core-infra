@@ -24,3 +24,7 @@ variable "tfc_variable_set_name" {
   description = "The name of the variable set you want to target to create AWS dynamic cred variables in"
   default     = "aws-creds"
 }
+
+variable "ssh_private_key" {
+  type = string
+}
