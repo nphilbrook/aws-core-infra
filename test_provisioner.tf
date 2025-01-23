@@ -18,7 +18,7 @@ resource "aws_instance" "test" {
     user        = "ec2-user"
     private_key = var.ssh_private_key
     host        = self.public_ip
-    script_path = "/home/ec2-user"
+    script_path = "/home/ec2-user/foo.sh"
   }
 
   provisioner "remote-exec" {
