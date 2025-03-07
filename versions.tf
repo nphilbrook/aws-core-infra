@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~>1.7"
+  required_version = "~>1.10"
 
   required_providers {
     aws = {
@@ -34,6 +34,14 @@ locals {
 
 provider "aws" {
   region = "us-east-2"
+  default_tags {
+    tags = local.tags_labels
+  }
+}
+
+provider "aws" {
+  region = "us-west-2"
+  alias  = "usw2"
   default_tags {
     tags = local.tags_labels
   }
