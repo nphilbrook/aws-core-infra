@@ -75,6 +75,7 @@ resource "aws_instance" "jump" {
 }
 
 resource "aws_vpc_peering_connection_accepter" "accept_peer" {
+  provider                  = aws.usw2
   vpc_peering_connection_id = "pcx-0532c809c8da070db"
   auto_accept               = true
 }
