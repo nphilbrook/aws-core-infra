@@ -73,3 +73,8 @@ resource "aws_instance" "jump" {
     ignore_changes = [ami]
   }
 }
+
+resource "aws_vpc_peering_connection_accepter" "accept_peer" {
+  vpc_peering_connection_id = "pcx-0532c809c8da070db"
+  auto_accept               = true
+}
