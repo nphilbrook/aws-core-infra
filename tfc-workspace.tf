@@ -3,7 +3,7 @@
 #
 resource "tfe_variable_set" "aws_variable_set" {
   name   = var.tfc_variable_set_name
-  global = true
+  global = false
 }
 
 # The following variables must be set to allow runs
