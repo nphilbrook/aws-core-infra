@@ -43,6 +43,7 @@ resource "aws_vpc" "e1" {
 
 resource "aws_subnet" "e1" {
   vpc_id            = aws_vpc.e1.id
+  provider          = aws.use1
   cidr_block        = "10.4.0.0/24"
   availability_zone = "us-east-1a"
 }

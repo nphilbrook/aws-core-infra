@@ -1,3 +1,4 @@
+
 # us-east-2 allow all
 resource "aws_security_group" "allow_all" {
   name        = "allow-all"
@@ -70,6 +71,7 @@ resource "aws_vpc_security_group_egress_rule" "all_egress_w2" {
 
 # us-east-2 allow SSH/egress
 resource "aws_security_group" "allow_ssh_e2" {
+  vpc_id      = aws_vpc.e2.id
   name        = "allow-ssh"
   description = "Allow all SSH traffic and all egress traffic"
 
@@ -96,9 +98,9 @@ resource "aws_vpc_security_group_egress_rule" "all_egress_e2" {
 # us-east-1 allow SSH/egress
 resource "aws_security_group" "allow_ssh_e1" {
   provider    = aws.use1
+  vpc_id      = aws_vpc.e1.id
   name        = "allow-ssh"
   description = "Allow all SSH traffic and all egress traffic"
-
 }
 
 resource "aws_vpc_security_group_ingress_rule" "ssh_e1" {
