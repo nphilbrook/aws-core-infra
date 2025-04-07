@@ -2,43 +2,51 @@ locals {
   hvn_account_id = "734224019710"
 }
 
-resource "aws_ec2_transit_gateway" "example" {
+resource "aws_ec2_transit_gateway" "e2" {
   # implied e2 provider
   tags = {
-    Name = "example-tgw"
+    Name = "tgw-e2"
   }
 }
 
-resource "aws_ram_resource_share" "example" {
-  name                      = "example-resource-share"
-  allow_external_principals = true
-}
+# resource "aws_ram_resource_share" "example" {
+#   name                      = "example-resource-share"
+#   allow_external_principals = true
+# }
 
-resource "aws_ram_principal_association" "example" {
-  resource_share_arn = aws_ram_resource_share.example.arn
-  principal          = local.hvn_account_id
-}
+# resource "aws_ram_principal_association" "example" {
+#   resource_share_arn = aws_ram_resource_share.example.arn
+#   principal          = local.hvn_account_id
+# }
 
-resource "aws_ram_resource_association" "example" {
-  resource_share_arn = aws_ram_resource_share.example.arn
-  resource_arn       = aws_ec2_transit_gateway.example.arn
-}
-
+# resource "aws_ram_resource_association" "example" {
+#   resource_share_arn = aws_ram_resource_share.example.arn
+#   resource_arn       = aws_ec2_transit_gateway.e2.arn
+# }
 
 # resource "aws_ec2_transit_gateway_vpc_attachment_accepter" "example" {
 #   transit_gateway_attachment_id = "TBD" # hcp_aws_transit_gateway_attachment.example.provider_transit_gateway_attachment_id
 # }
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "e2" {
+  # implied e2 provider
   subnet_ids         = [aws_subnet.e2.id]
-  transit_gateway_id = aws_ec2_transit_gateway.example.id
+  transit_gateway_id = aws_ec2_transit_gateway.e2.id
   vpc_id             = aws_vpc.e2.id
+}
+
+
+resource "aws_ec2_transit_gateway" "e1" {
+  provider = aws.use1
+  tags = {
+    Name = "tgw-e1"
+  }
 }
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "e1" {
   provider           = aws.use1
   subnet_ids         = [aws_subnet.e1.id]
-  transit_gateway_id = aws_ec2_transit_gateway.example.id
+  transit_gateway_id = aws_ec2_transit_gateway.e1.id
   vpc_id             = aws_vpc.e1.id
 }
 
@@ -56,9 +64,16 @@ data "aws_subnets" "w2" {
   }
 }
 
+resource "aws_ec2_transit_gateway" "w2" {
+  provider = aws.usw2
+  tags = {
+    Name = "tgw-w2"
+  }
+}
+
 resource "aws_ec2_transit_gateway_vpc_attachment" "w2" {
   provider           = aws.usw2
   subnet_ids         = [data.aws_subnets.w2.ids[0]]
-  transit_gateway_id = aws_ec2_transit_gateway.example.id
+  transit_gateway_id = aws_ec2_transit_gateway.w2.id
   vpc_id             = data.aws_vpc.default_w2.id
 }
