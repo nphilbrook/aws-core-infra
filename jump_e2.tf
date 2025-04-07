@@ -1,12 +1,4 @@
-# Shouldn't need this, all egress above?
-# resource "aws_security_group" "allow_vault_w2" {
-#   provider    = aws.usw2
-#   name        = "allow-vault-peering"
-#   description = "Allow Vault API traffic over the peering connection"
-# }
-
-data "aws_ami" "rhel9_usw2" {
-  provider    = aws.usw2
+data "aws_ami" "rhel9_e2" {
   most_recent = true
 
   filter {
@@ -33,20 +25,31 @@ data "aws_ami" "rhel9_usw2" {
 }
 
 # Create AWS keypair
-resource "aws_key_pair" "acme_w2" {
-  provider   = aws.usw2
-  key_name   = "acme-w2"
+resource "aws_key_pair" "ubuntu" {
+  key_name   = "terraform-key"
   public_key = <<EOF
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC48Ys2HvlHglzLbwdfxt9iK2LATImoH8VG9vWzvuiRIsa8UQxbLbk6Gutx3MpB2FZywB3ZrZfw5MqivAtJXE2Os/QmgAZQxRpV15BTzrgvbqTKyibKnmRsCG59O8icftREKY6q/gvzr67QcMhMEZLDExS8c+zycQT1xCVg1ip5PwPAwMQRxtqLvV/5B85IsJuMZi3YymYaVSJgayYBA2eM/M8YInlIDKNqekHL/cUZFG2TP98NOODsY4kRyos4c8+jkULLCOGu0rLhA7rP3NsvEbcpCOI2lS5XgxnOHIpZ42V2xGId8IRDtK4wEGAHEWmOKdOsL4Qe5AwglHMmdkZU2HKdThOb5+8pf5BDe/I9aLB3k7vW5jcOm1dyHZ0pg/Tg9hJdFCCSBm0E4EJDRzI223chgwjf+XrMDB7DHTa29KU63rDeQme89y57HkgxXCIq4EVUKRaJS1PIUI7uJKMDryd2Au/W9z4nAbindFIxHMg/eC1aW0k90ri8FebvkX0= appleshampoo@delia
 EOF
 }
 
-resource "aws_instance" "jump" {
-  provider               = aws.usw2
-  ami                    = data.aws_ami.rhel9_usw2.id
-  instance_type          = "t3.medium"
-  key_name               = aws_key_pair.acme_w2.key_name
-  vpc_security_group_ids = [aws_security_group.allow_ssh_w2.id]
+## NON-DEFAOULT VPC
+resource "aws_vpc" "e2" {
+  cidr_block = "10.3.0.0/16"
+}
+
+resource "aws_subnet" "e2" {
+  vpc_id            = aws_vpc.e2.id
+  cidr_block        = "10.3.0.0/24"
+  availability_zone = "us-east-2a"
+}
+
+resource "aws_instance" "jump_e2" {
+  ami                         = data.aws_ami.rhel9_e2.id
+  associate_public_ip_address = true
+  subnet_id                   = aws_subnet.e2.id
+  instance_type               = "t3.medium"
+  key_name                    = aws_key_pair.ubuntu.key_name
+  vpc_security_group_ids      = [aws_security_group.allow_ssh_e2.id]
   tags = { Name = "jump",
     owner = "nick.philbrook@hashicorp.com",
     TTL   = 0
@@ -56,17 +59,10 @@ resource "aws_instance" "jump" {
   }
 }
 
-resource "aws_instance" "jump_use2" {
-  ami                    = data.aws_ami.rhel9.id
-  instance_type          = "t3.medium"
-  key_name               = aws_key_pair.ubuntu.key_name
-  vpc_security_group_ids = [aws_security_group.allow_ssh_e2.id]
-  tags = { Name = "jump",
-    owner = "nick.philbrook@hashicorp.com",
-    TTL   = 0
-  }
-  lifecycle {
-    ignore_changes = [ami]
-  }
+resource "aws_route53_record" "jump_e2" {
+  zone_id = aws_route53_zone.primary.zone_id
+  name    = "jumpe2.${local.subdomain}"
+  type    = "A"
+  ttl     = 300
+  records = [aws_instance.jump_e2.public_ip]
 }
-
