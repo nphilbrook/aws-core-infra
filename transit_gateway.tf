@@ -64,7 +64,18 @@ resource "aws_ec2_transit_gateway_peering_attachment" "example" {
   }
 }
 
-# Since I used the default here...
+resource "aws_ec2_transit_gateway_peering_attachment_accepter" "e2_e1_accepnt" {
+  provider                      = aws.use1
+  transit_gateway_attachment_id = aws_ec2_transit_gateway_peering_attachment.example.id
+
+  tags = {
+    Name = "E2 / E1 TGW Peering Acceptor"
+  }
+}
+#### END E2 / E1 PEERING
+
+
+# Since I used the default VPC here...
 data "aws_vpc" "default_w2" {
   provider = aws.usw2
   default  = true
