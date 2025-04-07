@@ -2,8 +2,10 @@ locals {
   hvn_account_id = "734224019710"
 }
 
+# HUB?!
 resource "aws_ec2_transit_gateway" "e2" {
   # implied e2 provider
+  auto_accept_shared_attachments = "enable"
   tags = {
     Name = "tgw-e2"
   }
@@ -37,7 +39,8 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "e2" {
 
 
 resource "aws_ec2_transit_gateway" "e1" {
-  provider = aws.use1
+  provider                       = aws.use1
+  auto_accept_shared_attachments = "enable"
   tags = {
     Name = "tgw-e1"
   }
@@ -48,6 +51,18 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "e1" {
   subnet_ids         = [aws_subnet.e1.id]
   transit_gateway_id = aws_ec2_transit_gateway.e1.id
   vpc_id             = aws_vpc.e1.id
+}
+
+#### E2 / E1 PEERING
+resource "aws_ec2_transit_gateway_peering_attachment" "example" {
+  peer_account_id         = data.aws_caller_identity.current.account_id
+  peer_region             = "us-east1"
+  peer_transit_gateway_id = aws_ec2_transit_gateway.e1.id
+  transit_gateway_id      = aws_ec2_transit_gateway.e2.id
+
+  tags = {
+    Name = "E2 / E1 TGW Peering Requestor"
+  }
 }
 
 # Since I used the default here...
@@ -65,7 +80,8 @@ data "aws_subnets" "w2" {
 }
 
 resource "aws_ec2_transit_gateway" "w2" {
-  provider = aws.usw2
+  provider                       = aws.usw2
+  auto_accept_shared_attachments = "enable"
   tags = {
     Name = "tgw-w2"
   }
