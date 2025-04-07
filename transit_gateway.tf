@@ -55,7 +55,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "e1" {
 
 #### E2 / E1 PEERING
 resource "aws_ec2_transit_gateway_peering_attachment" "example" {
-  peer_region             = "us-east1"
+  peer_region             = "us-east-1"
   peer_transit_gateway_id = aws_ec2_transit_gateway.e1.id
   transit_gateway_id      = aws_ec2_transit_gateway.e2.id
 
