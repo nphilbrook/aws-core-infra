@@ -36,6 +36,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "e2" {
 }
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "e1" {
+  provider           = aws.use1
   subnet_ids         = [aws_subnet.e1.id]
   transit_gateway_id = aws_ec2_transit_gateway.example.id
   vpc_id             = aws_vpc.e1.id
@@ -56,6 +57,7 @@ data "aws_subnets" "w2" {
 }
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "w2" {
+  provider           = aws.usw2
   subnet_ids         = [data.aws_subnets.w2.ids[0]]
   transit_gateway_id = aws_ec2_transit_gateway.example.id
   vpc_id             = data.aws_vpc.default_w2.id
