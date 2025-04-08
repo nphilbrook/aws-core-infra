@@ -92,11 +92,16 @@ resource "aws_vpc" "e1_2" {
 
 }
 
+resource "aws_internet_gateway" "e1_2" {
+  provider = aws.use1
+  vpc_id   = aws_vpc.e1_2.id
+}
+
 resource "aws_route" "e1_2" {
   provider               = aws.use1
   route_table_id         = aws_vpc.e1_2.main_route_table_id
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.e1.id
+  gateway_id             = aws_internet_gateway.e1_2.id
 }
 
 resource "aws_subnet" "e1_2" {
@@ -114,7 +119,7 @@ resource "aws_instance" "jump_e1_2" {
   instance_type               = "t3.medium"
   key_name                    = aws_key_pair.acme_e1.key_name
   vpc_security_group_ids      = [aws_security_group.allow_ssh_e1_2.id]
-  tags = { Name = "jump",
+  tags = { Name = "jumpe1-2",
     owner = "nick.philbrook@hashicorp.com",
     TTL   = 0
   }

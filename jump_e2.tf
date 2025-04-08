@@ -32,7 +32,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC48Ys2HvlHglzLbwdfxt9iK2LATImoH8VG9vWzvuiR
 EOF
 }
 
-## NON-DEFAOULT VPC
+## NON-DEFAULT VPC
 resource "aws_vpc" "e2" {
   cidr_block = "10.3.0.0/16"
 }
@@ -60,7 +60,7 @@ resource "aws_instance" "jump_e2" {
   instance_type               = "t3.medium"
   key_name                    = aws_key_pair.ubuntu.key_name
   vpc_security_group_ids      = [aws_security_group.allow_ssh_e2.id]
-  tags = { Name = "jump",
+  tags = { Name = "jumpe2",
     owner = "nick.philbrook@hashicorp.com",
     TTL   = 0
   }
