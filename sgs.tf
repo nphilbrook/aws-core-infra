@@ -72,6 +72,7 @@ resource "aws_vpc_security_group_egress_rule" "all_egress_w2" {
 # us-west-2 2nd VPC allow SSH/egress
 resource "aws_security_group" "allow_ssh_w2_2" {
   provider    = aws.usw2
+  vpc_id      = aws_vpc.w2_2.id
   name        = "allow-ssh"
   description = "Allow all SSH traffic and all egress traffic"
 
