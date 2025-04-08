@@ -54,38 +54,39 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "e1" {
 }
 
 #### E2 / E1 PEERING
-resource "aws_ec2_transit_gateway_peering_attachment" "e2_e1_peering" {
-  peer_region             = "us-east-1"
-  peer_transit_gateway_id = aws_ec2_transit_gateway.e1.id
-  transit_gateway_id      = aws_ec2_transit_gateway.e2.id
+# resource "aws_ec2_transit_gateway_peering_attachment" "e2_e1_peering" {
+#   peer_region             = "us-east-1"
+#   peer_transit_gateway_id = aws_ec2_transit_gateway.e1.id
+#   transit_gateway_id      = aws_ec2_transit_gateway.e2.id
 
-  tags = {
-    Name = "E2 / E1 TGW Peering Requestor"
-  }
-}
+#   tags = {
+#     Name = "E2 / E1 TGW Peering Requestor"
+#   }
+# }
 
-resource "aws_ec2_transit_gateway_peering_attachment_accepter" "e2_e1_acceptor" {
-  provider                      = aws.use1
-  transit_gateway_attachment_id = aws_ec2_transit_gateway_peering_attachment.e2_e1_peering.id
+# resource "aws_ec2_transit_gateway_peering_attachment_accepter" "e2_e1_acceptor" {
+#   provider                      = aws.use1
+#   transit_gateway_attachment_id = aws_ec2_transit_gateway_peering_attachment.e2_e1_peering.id
 
-  tags = {
-    Name = "E2 / E1 TGW Peering Acceptor"
-  }
-}
+#   tags = {
+#     Name = "E2 / E1 TGW Peering Acceptor"
+#   }
+# }
 
-# E2 -> E1 route
-resource "aws_ec2_transit_gateway_route" "e2_e1" {
-  destination_cidr_block         = aws_vpc.e1.cidr_block
-  transit_gateway_route_table_id = aws_ec2_transit_gateway.e2.association_default_route_table_id
-  transit_gateway_attachment_id  = aws_ec2_transit_gateway_peering_attachment.e2_e1_peering.id
-}
+# # E2 -> E1 route
+# resource "aws_ec2_transit_gateway_route" "e2_e1" {
+#   destination_cidr_block         = aws_vpc.e1.cidr_block
+#   transit_gateway_route_table_id = aws_ec2_transit_gateway.e2.association_default_route_table_id
+#   transit_gateway_attachment_id  = aws_ec2_transit_gateway_peering_attachment_accepter.e2_e1_acceptor.transit_gateway_attachment_id
+# }
 
-# E1 -> E2 route
-resource "aws_ec2_transit_gateway_route" "e1_e2_route" {
-  destination_cidr_block         = aws_vpc.e2.cidr_block
-  transit_gateway_route_table_id = aws_ec2_transit_gateway.e1.association_default_route_table_id
-  transit_gateway_attachment_id  = aws_ec2_transit_gateway_peering_attachment.e2_e1_peering.id
-}
+# # E1 -> E2 route
+# resource "aws_ec2_transit_gateway_route" "e1_e2_route" {
+#   provider                       = aws.use1
+#   destination_cidr_block         = aws_vpc.e2.cidr_block
+#   transit_gateway_route_table_id = aws_ec2_transit_gateway.e1.association_default_route_table_id
+#   transit_gateway_attachment_id  = aws_ec2_transit_gateway_peering_attachment_accepter.e2_e1_acceptor.transit_gateway_attachment_id
+# }
 
 #### END E2 / E1 PEERING
 
