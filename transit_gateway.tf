@@ -73,14 +73,21 @@ resource "aws_ec2_transit_gateway_peering_attachment_accepter" "e2_e1_acceptor" 
   }
 }
 
-# E2 -> E1 route
+# E2 -> E1 *transit* route
 resource "aws_ec2_transit_gateway_route" "e2_e1" {
   destination_cidr_block         = aws_vpc.e1.cidr_block
   transit_gateway_route_table_id = aws_ec2_transit_gateway.e2.association_default_route_table_id
   transit_gateway_attachment_id  = aws_ec2_transit_gateway_peering_attachment_accepter.e2_e1_acceptor.transit_gateway_attachment_id
 }
 
-# E1 -> E2 route
+# E2 -> E1 *VPC* targeting the attachment
+resource "aws_route" "e2_e1_route" {
+  route_table_id         = aws_vpc.e2.main_route_table_id
+  destination_cidr_block = aws_vpc.e1.cidr_block
+  transit_gateway_id     = aws_ec2_transit_gateway.e2.id
+}
+
+# E1 -> E2 *transit* route
 resource "aws_ec2_transit_gateway_route" "e1_e2_route" {
   provider                       = aws.use1
   destination_cidr_block         = aws_vpc.e2.cidr_block
@@ -88,6 +95,13 @@ resource "aws_ec2_transit_gateway_route" "e1_e2_route" {
   transit_gateway_attachment_id  = aws_ec2_transit_gateway_peering_attachment_accepter.e2_e1_acceptor.transit_gateway_attachment_id
 }
 
+# E1 -> E2 *VPC* targeting the attachment
+resource "aws_route" "e1_e2_route" {
+  provider               = aws.use1
+  route_table_id         = aws_vpc.e1.main_route_table_id
+  destination_cidr_block = aws_vpc.e2.cidr_block
+  transit_gateway_id     = aws_ec2_transit_gateway.e1.id
+}
 #### END E2 / E1 PEERING
 
 
