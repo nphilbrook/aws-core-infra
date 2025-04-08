@@ -130,6 +130,8 @@ resource "aws_ec2_transit_gateway" "w2" {
   }
 }
 
+
+# HVN SHIZZ
 resource "aws_ram_resource_share" "w2_share" {
   provider                  = aws.usw2
   name                      = "w2-resource-share"
@@ -147,6 +149,16 @@ resource "aws_ram_resource_association" "w2_rra" {
   resource_share_arn = aws_ram_resource_share.w2_share.arn
   resource_arn       = aws_ec2_transit_gateway.w2.arn
 }
+
+# WHY
+resource "aws_route" "tgw_to_hvn" {
+  provider               = aws.usw2
+  route_table_id         = aws_vpc.w2_2.main_route_table_id
+  destination_cidr_block = "10.2.0.0/16"
+  transit_gateway_id     = aws_ec2_transit_gateway.w2.id
+}
+# END HVN SHIZZ
+
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "w2" {
   provider           = aws.usw2
