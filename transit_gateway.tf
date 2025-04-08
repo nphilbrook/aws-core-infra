@@ -148,11 +148,10 @@ resource "aws_ram_resource_association" "w2_rra" {
   resource_arn       = aws_ec2_transit_gateway.w2.arn
 }
 
-# resource "aws_ec2_transit_gateway_vpc_attachment_accepter" "example" {
-#   provider                       = aws.use1
-#   transit_gateway_attachment_id = "TBD" # hcp_aws_transit_gateway_attachment.example.provider_transit_gateway_attachment_id
-# }
-
+resource "aws_ec2_transit_gateway_vpc_attachment_accepter" "example" {
+  provider                      = aws.usw2
+  transit_gateway_attachment_id = "tgw-attach-0041a0b68d833cd62"
+}
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "w2" {
   provider           = aws.usw2
