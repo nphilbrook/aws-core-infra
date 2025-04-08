@@ -2,7 +2,7 @@ locals {
   hvn_account_id = "734224019710"
 }
 
-# HUB?!
+# HUB?! NO. No hub.
 resource "aws_ec2_transit_gateway" "e2" {
   # implied e2 provider
   auto_accept_shared_attachments = "enable"
@@ -25,29 +25,6 @@ resource "aws_ec2_transit_gateway" "e1" {
     Name = "tgw-e1"
   }
 }
-
-resource "aws_ram_resource_share" "e1_share" {
-  provider                  = aws.use1
-  name                      = "e1-resource-share"
-  allow_external_principals = true
-}
-
-resource "aws_ram_principal_association" "e1_pa" {
-  provider           = aws.use1
-  resource_share_arn = aws_ram_resource_share.e1_share.arn
-  principal          = local.hvn_account_id
-}
-
-resource "aws_ram_resource_association" "e1_rra" {
-  provider           = aws.use1
-  resource_share_arn = aws_ram_resource_share.e1_share.arn
-  resource_arn       = aws_ec2_transit_gateway.e1.arn
-}
-
-# resource "aws_ec2_transit_gateway_vpc_attachment_accepter" "example" {
-#   provider                       = aws.use1
-#   transit_gateway_attachment_id = "TBD" # hcp_aws_transit_gateway_attachment.example.provider_transit_gateway_attachment_id
-# }
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "e1" {
   provider           = aws.use1
@@ -153,11 +130,57 @@ resource "aws_ec2_transit_gateway" "w2" {
   }
 }
 
+resource "aws_ram_resource_share" "w2_share" {
+  provider                  = aws.usw2
+  name                      = "w2-resource-share"
+  allow_external_principals = true
+}
+
+resource "aws_ram_principal_association" "w2_pa" {
+  provider           = aws.usw2
+  resource_share_arn = aws_ram_resource_share.w2_share.arn
+  principal          = local.hvn_account_id
+}
+
+resource "aws_ram_resource_association" "w2_rra" {
+  provider           = aws.usw2
+  resource_share_arn = aws_ram_resource_share.w2_share.arn
+  resource_arn       = aws_ec2_transit_gateway.w2.arn
+}
+
+# resource "aws_ec2_transit_gateway_vpc_attachment_accepter" "example" {
+#   provider                       = aws.use1
+#   transit_gateway_attachment_id = "TBD" # hcp_aws_transit_gateway_attachment.example.provider_transit_gateway_attachment_id
+# }
+
+
 resource "aws_ec2_transit_gateway_vpc_attachment" "w2" {
   provider           = aws.usw2
   subnet_ids         = [data.aws_subnets.w2.ids[0]]
   transit_gateway_id = aws_ec2_transit_gateway.w2.id
   vpc_id             = data.aws_vpc.default_w2.id
+}
+
+resource "aws_ec2_transit_gateway_vpc_attachment" "w2_2" {
+  provider           = aws.usw2
+  subnet_ids         = [aws_subnet.w2_2.id]
+  transit_gateway_id = aws_ec2_transit_gateway.w2.id
+  vpc_id             = aws_vpc.w2_2.id
+}
+
+# intra W2 routing targeting the TGW in W2
+resource "aws_route" "w2_172_to_6_route" {
+  provider               = aws.usw2
+  route_table_id         = data.aws_vpc.default_w2.main_route_table_id
+  destination_cidr_block = aws_vpc.w2_2.cidr_block
+  transit_gateway_id     = aws_ec2_transit_gateway.w2.id
+}
+
+resource "aws_route" "e1_6_to_172_route" {
+  provider               = aws.usw2
+  route_table_id         = aws_vpc.w2_2.main_route_table_id
+  destination_cidr_block = data.aws_vpc.default_w2.cidr_block
+  transit_gateway_id     = aws_ec2_transit_gateway.w2.id
 }
 
 #### E2 / W2 PEERING

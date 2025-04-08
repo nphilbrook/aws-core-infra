@@ -42,7 +42,7 @@ resource "aws_vpc_security_group_egress_rule" "all_egress" {
 # end us-east-2 allow all
 
 
-# us-west-1 allow SSH/egress
+# us-west-2 allow SSH/egress
 resource "aws_security_group" "allow_ssh_w2" {
   provider    = aws.usw2
   name        = "allow-ssh"
@@ -67,7 +67,34 @@ resource "aws_vpc_security_group_egress_rule" "all_egress_w2" {
   cidr_ipv4   = "0.0.0.0/0"
   ip_protocol = -1
 }
-# end us-west-1 allow SSH/egress
+# end us-west-2 allow SSH/egress
+
+# us-west-2 2nd VPC allow SSH/egress
+resource "aws_security_group" "allow_ssh_w2_2" {
+  provider    = aws.usw2
+  name        = "allow-ssh"
+  description = "Allow all SSH traffic and all egress traffic"
+
+}
+
+resource "aws_vpc_security_group_ingress_rule" "ssh_w2_2" {
+  provider          = aws.usw2
+  security_group_id = aws_security_group.allow_ssh_w2_2.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 22
+  ip_protocol = "tcp"
+  to_port     = 22
+}
+
+resource "aws_vpc_security_group_egress_rule" "all_egress_w2_2" {
+  provider          = aws.usw2
+  security_group_id = aws_security_group.allow_ssh_w2_2.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  ip_protocol = -1
+}
+# end us-west-2 2nd VPC allow SSH/egress
 
 # us-east-2 allow SSH/egress
 resource "aws_security_group" "allow_ssh_e2" {

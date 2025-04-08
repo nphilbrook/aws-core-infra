@@ -34,7 +34,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC48Ys2HvlHglzLbwdfxt9iK2LATImoH8VG9vWzvuiR
 EOF
 }
 
-## NON-DEFAOULT VPC
+## NON-DEFAULT VPC
 resource "aws_vpc" "e1" {
   provider   = aws.use1
   cidr_block = "10.4.0.0/16"

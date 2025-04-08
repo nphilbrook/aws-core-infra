@@ -69,3 +69,55 @@ resource "aws_route53_record" "jump_w2" {
   ttl     = 300
   records = [aws_instance.jump_w2.public_ip]
 }
+
+
+## NON-DEFAULT VPC
+resource "aws_vpc" "w2_2" {
+  provider   = aws.usw2
+  cidr_block = "10.6.0.0/16"
+
+}
+
+resource "aws_internet_gateway" "w2_2" {
+  provider = aws.usw2
+  vpc_id   = aws_vpc.w2_2.id
+}
+
+resource "aws_route" "w2_2" {
+  provider               = aws.usw2
+  route_table_id         = aws_vpc.w2_2.main_route_table_id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.w2_2.id
+}
+
+resource "aws_subnet" "w2_2" {
+  provider          = aws.usw2
+  vpc_id            = aws_vpc.w2_2.id
+  cidr_block        = "10.6.0.0/24"
+  availability_zone = "us-west-2a"
+}
+
+resource "aws_instance" "jump_w2_2" {
+  provider                    = aws.usw2
+  ami                         = data.aws_ami.rhel9_w2.id
+  associate_public_ip_address = true
+  subnet_id                   = aws_subnet.w2_2.id
+  instance_type               = "t3.medium"
+  key_name                    = aws_key_pair.acme_w2.key_name
+  vpc_security_group_ids      = [aws_security_group.allow_ssh_w2_2.id]
+  tags = { Name = "jumpw2-2",
+    owner = "nick.philbrook@hashicorp.com",
+    TTL   = 0
+  }
+  lifecycle {
+    ignore_changes = [ami]
+  }
+}
+
+resource "aws_route53_record" "jump_w2_2" {
+  zone_id = aws_route53_zone.primary.zone_id
+  name    = "jumpw2-2.${local.subdomain}"
+  type    = "A"
+  ttl     = 300
+  records = [aws_instance.jump_w2_2.public_ip]
+}
