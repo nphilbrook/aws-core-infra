@@ -37,7 +37,6 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "e2" {
   vpc_id             = aws_vpc.e2.id
 }
 
-
 resource "aws_ec2_transit_gateway" "e1" {
   provider                       = aws.use1
   auto_accept_shared_attachments = "enable"
@@ -51,6 +50,13 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "e1" {
   subnet_ids         = [aws_subnet.e1.id]
   transit_gateway_id = aws_ec2_transit_gateway.e1.id
   vpc_id             = aws_vpc.e1.id
+}
+
+resource "aws_ec2_transit_gateway_vpc_attachment" "e1_2" {
+  provider           = aws.use1
+  subnet_ids         = [aws_subnet.e1_2.id]
+  transit_gateway_id = aws_ec2_transit_gateway.e1.id
+  vpc_id             = aws_vpc.e1_2.id
 }
 
 #### E2 / E1 PEERING
