@@ -193,7 +193,7 @@ resource "aws_route" "w2_e2_route" {
 
 
 
-#### E1 / W2 ROUTING
+#### E1 / W2 ROUTING WHICH IS ALL BROKEN
 
 # E1 -> W2 *transit* route (targeting E2 TGW attachment)
 # resource "aws_ec2_transit_gateway_route" "e1_w2" {
@@ -204,12 +204,12 @@ resource "aws_route" "w2_e2_route" {
 # }
 
 # E1 -> W2 *VPC* targeting the TGW
-resource "aws_route" "e1_w2_route" {
-  provider               = aws.use1
-  route_table_id         = aws_vpc.e1.main_route_table_id
-  destination_cidr_block = data.aws_vpc.default_w2.cidr_block
-  transit_gateway_id     = aws_ec2_transit_gateway.e1.id
-}
+# resource "aws_route" "e1_w2_route" {
+#   provider               = aws.use1
+#   route_table_id         = aws_vpc.e1.main_route_table_id
+#   destination_cidr_block = data.aws_vpc.default_w2.cidr_block
+#   transit_gateway_id     = aws_ec2_transit_gateway.e1.id
+# }
 
 # W2 -> E1 *transit* route (targeting W2 TGW attachment)
 # resource "aws_ec2_transit_gateway_route" "w2_e1" {
@@ -220,9 +220,9 @@ resource "aws_route" "e1_w2_route" {
 # }
 
 # W2 -> E1 *VPC* targeting the TGW
-resource "aws_route" "w2_e1_route" {
-  provider               = aws.usw2
-  route_table_id         = data.aws_vpc.default_w2.main_route_table_id
-  destination_cidr_block = aws_vpc.e1.cidr_block
-  transit_gateway_id     = aws_ec2_transit_gateway.w2.id
-}
+# resource "aws_route" "w2_e1_route" {
+#   provider               = aws.usw2
+#   route_table_id         = data.aws_vpc.default_w2.main_route_table_id
+#   destination_cidr_block = aws_vpc.e1.cidr_block
+#   transit_gateway_id     = aws_ec2_transit_gateway.w2.id
+# }
