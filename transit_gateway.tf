@@ -59,6 +59,22 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "e1_2" {
   vpc_id             = aws_vpc.e1_2.id
 }
 
+# intra E1 routing targeting the TGW in E1
+resource "aws_route" "e1_4_to_5_route" {
+  provider               = aws.use1
+  route_table_id         = aws_vpc.e1.main_route_table_id
+  destination_cidr_block = aws_vpc.e1_2.cidr_block
+  transit_gateway_id     = aws_ec2_transit_gateway.e1.id
+}
+
+resource "aws_route" "e1_5_to_4_route" {
+  provider               = aws.use1
+  route_table_id         = aws_vpc.e1_2.main_route_table_id
+  destination_cidr_block = aws_vpc.e1.cidr_block
+  transit_gateway_id     = aws_ec2_transit_gateway.e1.id
+}
+
+
 #### E2 / E1 PEERING
 resource "aws_ec2_transit_gateway_peering_attachment" "e2_e1_peering" {
   peer_region             = "us-east-1"

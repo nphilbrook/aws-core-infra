@@ -68,7 +68,7 @@ resource "aws_instance" "jump_e1" {
   instance_type               = "t3.medium"
   key_name                    = aws_key_pair.acme_e1.key_name
   vpc_security_group_ids      = [aws_security_group.allow_ssh_e1.id]
-  tags = { Name = "jump",
+  tags = { Name = "jumpe1",
     owner = "nick.philbrook@hashicorp.com",
     TTL   = 0
   }
