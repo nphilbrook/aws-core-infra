@@ -216,7 +216,7 @@ resource "aws_ec2_transit_gateway_route" "w2_e1" {
 # W2 -> E1 *VPC* targeting the TGW
 resource "aws_route" "w2_e1_route" {
   provider               = aws.usw2
-  route_table_id         = aws_vpc.w2.main_route_table_id
+  route_table_id         = data.aws_vpc.default_w2.main_route_table_id
   destination_cidr_block = aws_vpc.e1.cidr_block
   transit_gateway_id     = aws_ec2_transit_gateway.w2.id
 }
