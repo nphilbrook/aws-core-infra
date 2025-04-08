@@ -133,3 +133,54 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "w2" {
   transit_gateway_id = aws_ec2_transit_gateway.w2.id
   vpc_id             = data.aws_vpc.default_w2.id
 }
+
+#### E2 / W2 PEERING
+resource "aws_ec2_transit_gateway_peering_attachment" "e2_w2_peering" {
+  peer_region             = "us-west-2"
+  peer_transit_gateway_id = aws_ec2_transit_gateway.w2.id
+  transit_gateway_id      = aws_ec2_transit_gateway.e2.id
+
+  tags = {
+    Name = "E2 / W2 TGW Peering Requestor"
+  }
+}
+
+resource "aws_ec2_transit_gateway_peering_attachment_accepter" "e2_w2_acceptor" {
+  provider                      = aws.usw2
+  transit_gateway_attachment_id = aws_ec2_transit_gateway_peering_attachment.e2_w2_peering.id
+
+  tags = {
+    Name = "E2 / W2 TGW Peering Acceptor"
+  }
+}
+
+# E2 -> W2 *transit* route
+resource "aws_ec2_transit_gateway_route" "e2_w2" {
+  destination_cidr_block         = data.aws_vpc.default_w2.cidr_block
+  transit_gateway_route_table_id = aws_ec2_transit_gateway.e2.association_default_route_table_id
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_peering_attachment_accepter.e2_w2_acceptor.transit_gateway_attachment_id
+}
+
+# E2 -> W2 *VPC* targeting the attachment
+resource "aws_route" "e2_w2_route" {
+  route_table_id         = aws_vpc.e2.main_route_table_id
+  destination_cidr_block = data.aws_vpc.default_w2.cidr_block
+  transit_gateway_id     = aws_ec2_transit_gateway.e2.id
+}
+
+# W2 -> E2 *transit* route
+resource "aws_ec2_transit_gateway_route" "w2_e2_route" {
+  provider                       = aws.usw2
+  destination_cidr_block         = aws_vpc.e2.cidr_block
+  transit_gateway_route_table_id = aws_ec2_transit_gateway.w2.association_default_route_table_id
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_peering_attachment_accepter.e2_w2_acceptor.transit_gateway_attachment_id
+}
+
+# W2 -> E2 *VPC* targeting the attachment
+resource "aws_route" "w2_e2_route" {
+  provider               = aws.usw2
+  route_table_id         = data.aws_vpc.default_w2.main_route_table_id
+  destination_cidr_block = aws_vpc.e2.cidr_block
+  transit_gateway_id     = aws_ec2_transit_gateway.w2.id
+}
+#### END E2 / W2 PEERING
