@@ -151,9 +151,16 @@ resource "aws_ram_resource_association" "w2_rra" {
 }
 
 # WHY
-resource "aws_route" "tgw_to_hvn" {
+resource "aws_route" "vpc_w2_to_hvn" {
   provider               = aws.usw2
   route_table_id         = aws_vpc.w2_2.main_route_table_id
+  destination_cidr_block = "10.2.0.0/16"
+  transit_gateway_id     = aws_ec2_transit_gateway.w2.id
+}
+
+resource "aws_route" "vpc_w3_to_hvn" {
+  provider               = aws.usw2
+  route_table_id         = aws_vpc.w2_3.main_route_table_id
   destination_cidr_block = "10.2.0.0/16"
   transit_gateway_id     = aws_ec2_transit_gateway.w2.id
 }
@@ -174,6 +181,13 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "w2_2" {
   vpc_id             = aws_vpc.w2_2.id
 }
 
+resource "aws_ec2_transit_gateway_vpc_attachment" "w2_3" {
+  provider           = aws.usw2
+  subnet_ids         = [aws_subnet.w2_3.id]
+  transit_gateway_id = aws_ec2_transit_gateway.w2.id
+  vpc_id             = aws_vpc.w2_3.id
+}
+
 # intra W2 routing targeting the TGW in W2
 resource "aws_route" "w2_172_to_6_route" {
   provider               = aws.usw2
@@ -182,7 +196,7 @@ resource "aws_route" "w2_172_to_6_route" {
   transit_gateway_id     = aws_ec2_transit_gateway.w2.id
 }
 
-resource "aws_route" "e1_6_to_172_route" {
+resource "aws_route" "w2_6_to_172_route" {
   provider               = aws.usw2
   route_table_id         = aws_vpc.w2_2.main_route_table_id
   destination_cidr_block = data.aws_vpc.default_w2.cidr_block
