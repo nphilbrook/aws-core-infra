@@ -3,8 +3,8 @@ terraform {
     organization = "philbrook"
 
     workspaces {
-      name    = "tfe-scratch"
-      project = "Default Project"
+      name    = "aws-core-infra"
+      project = "SB Vault Lab"
     }
   }
 }
