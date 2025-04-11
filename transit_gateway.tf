@@ -202,6 +202,7 @@ resource "aws_route" "w2_6_to_172_route" {
   destination_cidr_block = data.aws_vpc.default_w2.cidr_block
   transit_gateway_id     = aws_ec2_transit_gateway.w2.id
 }
+# end intra W2 routing targeting the TGW in W2
 
 #### E2 / W2 PEERING
 resource "aws_ec2_transit_gateway_peering_attachment" "e2_w2_peering" {
