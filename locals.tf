@@ -1,3 +1,3 @@
 locals {
-  jump_instance_type = "t3a.micro"
+  jump_instance_type = "t3a.small"
 }
