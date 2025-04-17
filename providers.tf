@@ -1,7 +1,7 @@
 locals {
   tags_labels = {
     "created-by"       = "terraform",
-    "source-workspace" = terraform.workspace
+    "source-workspace" = var.TFC_WORKSPACE_SLUG
   }
 }
 
@@ -31,4 +31,3 @@ provider "aws" {
 provider "tfe" {
   hostname = var.tfc_hostname
 }
-

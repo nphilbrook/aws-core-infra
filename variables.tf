@@ -28,3 +28,8 @@ variable "tfc_variable_set_name" {
 variable "ssh_private_key" {
   type = string
 }
+
+# Automatically injected by Terraform
+variable "TFC_WORKSPACE_SLUG" {
+  type = string
+}
