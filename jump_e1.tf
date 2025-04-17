@@ -60,30 +60,30 @@ resource "aws_subnet" "e1" {
   availability_zone = "us-east-1a"
 }
 
-resource "aws_instance" "jump_e1" {
-  provider                    = aws.use1
-  ami                         = data.aws_ami.rhel9_use1.id
-  associate_public_ip_address = true
-  subnet_id                   = aws_subnet.e1.id
-  instance_type               = "t3.medium"
-  key_name                    = aws_key_pair.acme_e1.key_name
-  vpc_security_group_ids      = [aws_security_group.allow_ssh_e1.id]
-  tags = { Name = "jumpe1",
-    owner = "nick.philbrook@hashicorp.com",
-    TTL   = 0
-  }
-  lifecycle {
-    ignore_changes = [ami]
-  }
-}
+# resource "aws_instance" "jump_e1" {
+#   provider                    = aws.use1
+#   ami                         = data.aws_ami.rhel9_use1.id
+#   associate_public_ip_address = true
+#   subnet_id                   = aws_subnet.e1.id
+#   instance_type               = local.jump_instance_type
+#   key_name                    = aws_key_pair.acme_e1.key_name
+#   vpc_security_group_ids      = [aws_security_group.allow_ssh_e1.id]
+#   tags = { Name = "jumpe1",
+#     owner = "nick.philbrook@hashicorp.com",
+#     TTL   = 0
+#   }
+#   lifecycle {
+#     ignore_changes = [ami]
+#   }
+# }
 
-resource "aws_route53_record" "jump_e1" {
-  zone_id = aws_route53_zone.primary.zone_id
-  name    = "jumpe1.${local.subdomain}"
-  type    = "A"
-  ttl     = 300
-  records = [aws_instance.jump_e1.public_ip]
-}
+# resource "aws_route53_record" "jump_e1" {
+#   zone_id = aws_route53_zone.primary.zone_id
+#   name    = "jumpe1.${local.subdomain}"
+#   type    = "A"
+#   ttl     = 300
+#   records = [aws_instance.jump_e1.public_ip]
+# }
 
 ## NON-DEFAOULT VPC #2 ELECTRIC BOOGALO
 resource "aws_vpc" "e1_2" {
@@ -111,27 +111,27 @@ resource "aws_subnet" "e1_2" {
   availability_zone = "us-east-1b"
 }
 
-resource "aws_instance" "jump_e1_2" {
-  provider                    = aws.use1
-  ami                         = data.aws_ami.rhel9_use1.id
-  associate_public_ip_address = true
-  subnet_id                   = aws_subnet.e1_2.id
-  instance_type               = "t3.medium"
-  key_name                    = aws_key_pair.acme_e1.key_name
-  vpc_security_group_ids      = [aws_security_group.allow_ssh_e1_2.id]
-  tags = { Name = "jumpe1-2",
-    owner = "nick.philbrook@hashicorp.com",
-    TTL   = 0
-  }
-  lifecycle {
-    ignore_changes = [ami]
-  }
-}
+# resource "aws_instance" "jump_e1_2" {
+#   provider                    = aws.use1
+#   ami                         = data.aws_ami.rhel9_use1.id
+#   associate_public_ip_address = true
+#   subnet_id                   = aws_subnet.e1_2.id
+#   instance_type               = local.jump_instance_type
+#   key_name                    = aws_key_pair.acme_e1.key_name
+#   vpc_security_group_ids      = [aws_security_group.allow_ssh_e1_2.id]
+#   tags = { Name = "jumpe1-2",
+#     owner = "nick.philbrook@hashicorp.com",
+#     TTL   = 0
+#   }
+#   lifecycle {
+#     ignore_changes = [ami]
+#   }
+# }
 
-resource "aws_route53_record" "jump_e1_2" {
-  zone_id = aws_route53_zone.primary.zone_id
-  name    = "jumpe1-2.${local.subdomain}"
-  type    = "A"
-  ttl     = 300
-  records = [aws_instance.jump_e1_2.public_ip]
-}
+# resource "aws_route53_record" "jump_e1_2" {
+#   zone_id = aws_route53_zone.primary.zone_id
+#   name    = "jumpe1-2.${local.subdomain}"
+#   type    = "A"
+#   ttl     = 300
+#   records = [aws_instance.jump_e1_2.public_ip]
+# }

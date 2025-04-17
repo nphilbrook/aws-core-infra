@@ -41,16 +41,11 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC48Ys2HvlHglzLbwdfxt9iK2LATImoH8VG9vWzvuiR
 EOF
 }
 
-moved {
-  from = aws_instance.jump
-  to   = aws_instance.jump_w2
-}
-
 resource "aws_instance" "jump_w2" {
   provider                    = aws.usw2
   ami                         = data.aws_ami.rhel9_w2.id
   associate_public_ip_address = true
-  instance_type               = "t3.medium"
+  instance_type               = local.jump_instance_type
   key_name                    = aws_key_pair.acme_w2.key_name
   vpc_security_group_ids      = [aws_security_group.allow_ssh_w2.id]
   tags = { Name = "jumpw2",
@@ -97,30 +92,30 @@ resource "aws_subnet" "w2_2" {
   availability_zone = "us-west-2a"
 }
 
-resource "aws_instance" "jump_w2_2" {
-  provider                    = aws.usw2
-  ami                         = data.aws_ami.rhel9_w2.id
-  associate_public_ip_address = true
-  subnet_id                   = aws_subnet.w2_2.id
-  instance_type               = "t3.medium"
-  key_name                    = aws_key_pair.acme_w2.key_name
-  vpc_security_group_ids      = [aws_security_group.allow_ssh_w2_2.id]
-  tags = { Name = "jumpw2-2",
-    owner = "nick.philbrook@hashicorp.com",
-    TTL   = 0
-  }
-  lifecycle {
-    ignore_changes = [ami]
-  }
-}
+# resource "aws_instance" "jump_w2_2" {
+#   provider                    = aws.usw2
+#   ami                         = data.aws_ami.rhel9_w2.id
+#   associate_public_ip_address = true
+#   subnet_id                   = aws_subnet.w2_2.id
+#   instance_type               = local.jump_instance_type
+#   key_name                    = aws_key_pair.acme_w2.key_name
+#   vpc_security_group_ids      = [aws_security_group.allow_ssh_w2_2.id]
+#   tags = { Name = "jumpw2-2",
+#     owner = "nick.philbrook@hashicorp.com",
+#     TTL   = 0
+#   }
+#   lifecycle {
+#     ignore_changes = [ami]
+#   }
+# }
 
-resource "aws_route53_record" "jump_w2_2" {
-  zone_id = aws_route53_zone.primary.zone_id
-  name    = "jumpw2-2.${local.subdomain}"
-  type    = "A"
-  ttl     = 300
-  records = [aws_instance.jump_w2_2.public_ip]
-}
+# resource "aws_route53_record" "jump_w2_2" {
+#   zone_id = aws_route53_zone.primary.zone_id
+#   name    = "jumpw2-2.${local.subdomain}"
+#   type    = "A"
+#   ttl     = 300
+#   records = [aws_instance.jump_w2_2.public_ip]
+# }
 
 ## NON-DEFAULT VPC 2 ELECTRIC BOOGALOO
 resource "aws_vpc" "w2_3" {
@@ -147,27 +142,27 @@ resource "aws_subnet" "w2_3" {
   availability_zone = "us-west-2b"
 }
 
-resource "aws_instance" "jump_w2_3" {
-  provider                    = aws.usw2
-  ami                         = data.aws_ami.rhel9_w2.id
-  associate_public_ip_address = true
-  subnet_id                   = aws_subnet.w2_3.id
-  instance_type               = "t3.medium"
-  key_name                    = aws_key_pair.acme_w2.key_name
-  vpc_security_group_ids      = [aws_security_group.allow_ssh_w2_3.id]
-  tags = { Name = "jumpw2-3",
-    owner = "nick.philbrook@hashicorp.com",
-    TTL   = 0
-  }
-  lifecycle {
-    ignore_changes = [ami]
-  }
-}
+# resource "aws_instance" "jump_w2_3" {
+#   provider                    = aws.usw2
+#   ami                         = data.aws_ami.rhel9_w2.id
+#   associate_public_ip_address = true
+#   subnet_id                   = aws_subnet.w2_3.id
+#   instance_type               = local.jump_instance_type
+#   key_name                    = aws_key_pair.acme_w2.key_name
+#   vpc_security_group_ids      = [aws_security_group.allow_ssh_w2_3.id]
+#   tags = { Name = "jumpw2-3",
+#     owner = "nick.philbrook@hashicorp.com",
+#     TTL   = 0
+#   }
+#   lifecycle {
+#     ignore_changes = [ami]
+#   }
+# }
 
-resource "aws_route53_record" "jump_w2_3" {
-  zone_id = aws_route53_zone.primary.zone_id
-  name    = "jumpw2-3.${local.subdomain}"
-  type    = "A"
-  ttl     = 300
-  records = [aws_instance.jump_w2_3.public_ip]
-}
+# resource "aws_route53_record" "jump_w2_3" {
+#   zone_id = aws_route53_zone.primary.zone_id
+#   name    = "jumpw2-3.${local.subdomain}"
+#   type    = "A"
+#   ttl     = 300
+#   records = [aws_instance.jump_w2_3.public_ip]
+# }
