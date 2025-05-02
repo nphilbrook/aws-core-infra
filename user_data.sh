@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dnf install -y unzip zip nc tmux bind-utils git awscli docker
+dnf install -y git awscli docker
 export TFC_AGENT_TOKEN=$(aws secretsmanager get-secret-value --secret-id tfc-agent-token|jq -r .SecretString)
 export TFC_AGENT_NAME=$(hostname)-1
 # Current as of 2025-05-02
