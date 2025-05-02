@@ -65,7 +65,6 @@ resource "aws_route53_record" "jump_w2" {
   records = [aws_instance.jump_w2.public_ip]
 }
 
-
 ## NON-DEFAULT VPC
 resource "aws_vpc" "w2_2" {
   provider   = aws.usw2
