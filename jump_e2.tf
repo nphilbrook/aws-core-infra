@@ -33,25 +33,25 @@ EOF
 }
 
 ## NON-DEFAULT VPC
-resource "aws_vpc" "e2" {
-  cidr_block = "10.3.0.0/16"
-}
+# resource "aws_vpc" "e2" {
+#   cidr_block = "10.3.0.0/16"
+# }
 
-resource "aws_internet_gateway" "e2" {
-  vpc_id = aws_vpc.e2.id
-}
+# resource "aws_internet_gateway" "e2" {
+#   vpc_id = aws_vpc.e2.id
+# }
 
-resource "aws_route" "e2" {
-  route_table_id         = aws_vpc.e2.main_route_table_id
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.e2.id
-}
+# resource "aws_route" "e2" {
+#   route_table_id         = aws_vpc.e2.main_route_table_id
+#   destination_cidr_block = "0.0.0.0/0"
+#   gateway_id             = aws_internet_gateway.e2.id
+# }
 
-resource "aws_subnet" "e2" {
-  vpc_id            = aws_vpc.e2.id
-  cidr_block        = "10.3.0.0/24"
-  availability_zone = "us-east-2a"
-}
+# resource "aws_subnet" "e2" {
+#   vpc_id            = aws_vpc.e2.id
+#   cidr_block        = "10.3.0.0/24"
+#   availability_zone = "us-east-2a"
+# }
 
 # resource "aws_instance" "jump_e2" {
 #   ami                         = data.aws_ami.rhel9_e2.id
