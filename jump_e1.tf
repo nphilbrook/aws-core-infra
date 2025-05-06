@@ -35,30 +35,30 @@ EOF
 }
 
 ## NON-DEFAULT VPC
-resource "aws_vpc" "e1" {
-  provider   = aws.use1
-  cidr_block = "10.4.0.0/16"
+# resource "aws_vpc" "e1" {
+#   provider   = aws.use1
+#   cidr_block = "10.4.0.0/16"
 
-}
+# }
 
-resource "aws_internet_gateway" "e1" {
-  provider = aws.use1
-  vpc_id   = aws_vpc.e1.id
-}
+# resource "aws_internet_gateway" "e1" {
+#   provider = aws.use1
+#   vpc_id   = aws_vpc.e1.id
+# }
 
-resource "aws_route" "e1" {
-  provider               = aws.use1
-  route_table_id         = aws_vpc.e1.main_route_table_id
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.e1.id
-}
+# resource "aws_route" "e1" {
+#   provider               = aws.use1
+#   route_table_id         = aws_vpc.e1.main_route_table_id
+#   destination_cidr_block = "0.0.0.0/0"
+#   gateway_id             = aws_internet_gateway.e1.id
+# }
 
-resource "aws_subnet" "e1" {
-  provider          = aws.use1
-  vpc_id            = aws_vpc.e1.id
-  cidr_block        = "10.4.0.0/24"
-  availability_zone = "us-east-1a"
-}
+# resource "aws_subnet" "e1" {
+#   provider          = aws.use1
+#   vpc_id            = aws_vpc.e1.id
+#   cidr_block        = "10.4.0.0/24"
+#   availability_zone = "us-east-1a"
+# }
 
 # resource "aws_instance" "jump_e1" {
 #   provider                    = aws.use1
