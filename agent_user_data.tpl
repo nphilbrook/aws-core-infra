@@ -46,7 +46,7 @@ After=network.target
 [Service]
 User=root
 ExecStart=/usr/local/bin/tfc-agent-wrapper %I
-Restart=on-failure
+Restart=always
 RestartSec=10
 
 # The systemd journal by default collects all the STDOUT logs from the container started in the script,
