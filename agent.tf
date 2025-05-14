@@ -73,7 +73,8 @@ resource "aws_instance" "agent_supervised" {
   iam_instance_profile        = aws_iam_instance_profile.agent_profile.name
   instance_type               = local.jump_instance_type
   key_name                    = aws_key_pair.acme_w2.key_name
-  user_data                   = file("${path.module}/agent_user_data.sh")
+  user_data                   = templatefile("${path.module}/agent_user_data.sh", { num_agents = 2 })
+  user_data_replace_on_change = true
   vpc_security_group_ids      = [aws_security_group.allow_ssh_w2.id]
   tags = { Name = "agent-sup",
     owner = "nick.philbrook@hashicorp.com",

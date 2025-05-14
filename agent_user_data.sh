@@ -5,7 +5,11 @@ dnf install -y git awscli docker
 cat <<'EOF' > /usr/local/bin/tfc-agent-wrapper
 #!/bin/bash
 
-export TFC_AGENT_TOKEN=$(aws secretsmanager get-secret-value --secret-id tfc-agent-token|jq -r .SecretString)
+set -e
+
+SECRET_DATA=$(aws secretsmanager get-secret-value --secret-id tfc-agent-token)
+
+export TFC_AGENT_TOKEN=$(echo $SECRET_DATA | jq -r .SecretString)
 export TFC_AGENT_NAME=$(hostname)-$1
 export TFC_AGENT_AUTO_UPDATE=disabled
 # Current as of 2025-05-14
@@ -26,12 +30,17 @@ ExecStart=/usr/local/bin/tfc-agent-wrapper %I
 Restart=on-failure
 RestartSec=10
 
+# The systemd journal by default collects all the STDOUT logs from the container started in the script,
+# hence omitting the script's standard output here. Maintaining STDERR for debugging
+StandardOutput=null
+StandardError=journal
+
 [Install]
 WantedBy=multi-user.target
 EOF
 
-sudo systemctl enable tfc-agent@1.service
-sudo systemctl enable tfc-agent@2.service
-
-sudo systemctl start tfc-agent@1.service
-sudo systemctl start tfc-agent@2.service
+for i in $(seq 0 ${num_agents - 1})
+do
+    sudo systemctl enable tfc-agent@$i.service
+    sudo systemctl start tfc-agent@$i.service
+done
