@@ -13,7 +13,7 @@ export VERSION=1.22.2
 docker run -e TFC_AGENT_TOKEN -e TFC_AGENT_NAME -e TFC_AGENT_AUTO_UPDATE docker.io/hashicorp/tfc-agent:$VERSION
 EOF
 
-chmod 775 tfc-agent-wrapper
+chmod 775 /usr/local/bin/tfc-agent-wrapper
 
 cat <<EOF > /etc/systemd/system/tfc-agent@.service
 [Unit]
