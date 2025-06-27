@@ -179,7 +179,7 @@ resource "aws_vpc_security_group_egress_rule" "all_egress_w2_3" {
 
 
 # us-east-1 2nd VPC allow SSH/egress
-resource "aws_security_group" "allow_ssh_e1_2" {
+/* resource "aws_security_group" "allow_ssh_e1_2" {
   provider    = aws.use1
   vpc_id      = aws_vpc.e1_2.id
   name        = "allow-ssh"
@@ -203,6 +203,6 @@ resource "aws_vpc_security_group_egress_rule" "all_egress_e1_2" {
   cidr_ipv4   = "0.0.0.0/0"
   ip_protocol = -1
 }
-# end us-east-1 2nd VPC allow SSH/egress
+ */ # end us-east-1 2nd VPC allow SSH/egress
 
 

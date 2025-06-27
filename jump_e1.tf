@@ -26,14 +26,14 @@ data "aws_ami" "rhel9_use1" {
 }
 
 # Create AWS keypair
-resource "aws_key_pair" "acme_e1" {
+/* resource "aws_key_pair" "acme_e1" {
   provider   = aws.use1
   key_name   = "acme-e1"
   public_key = <<EOF
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC48Ys2HvlHglzLbwdfxt9iK2LATImoH8VG9vWzvuiRIsa8UQxbLbk6Gutx3MpB2FZywB3ZrZfw5MqivAtJXE2Os/QmgAZQxRpV15BTzrgvbqTKyibKnmRsCG59O8icftREKY6q/gvzr67QcMhMEZLDExS8c+zycQT1xCVg1ip5PwPAwMQRxtqLvV/5B85IsJuMZi3YymYaVSJgayYBA2eM/M8YInlIDKNqekHL/cUZFG2TP98NOODsY4kRyos4c8+jkULLCOGu0rLhA7rP3NsvEbcpCOI2lS5XgxnOHIpZ42V2xGId8IRDtK4wEGAHEWmOKdOsL4Qe5AwglHMmdkZU2HKdThOb5+8pf5BDe/I9aLB3k7vW5jcOm1dyHZ0pg/Tg9hJdFCCSBm0E4EJDRzI223chgwjf+XrMDB7DHTa29KU63rDeQme89y57HkgxXCIq4EVUKRaJS1PIUI7uJKMDryd2Au/W9z4nAbindFIxHMg/eC1aW0k90ri8FebvkX0= appleshampoo@delia
 EOF
 }
-
+ */
 ## NON-DEFAULT VPC
 # resource "aws_vpc" "e1" {
 #   provider   = aws.use1
@@ -86,7 +86,7 @@ EOF
 # }
 
 ## NON-DEFAOULT VPC #2 ELECTRIC BOOGALO
-resource "aws_vpc" "e1_2" {
+/* resource "aws_vpc" "e1_2" {
   provider   = aws.use1
   cidr_block = "10.5.0.0/16"
 
@@ -110,7 +110,7 @@ resource "aws_subnet" "e1_2" {
   cidr_block        = "10.5.0.0/24"
   availability_zone = "us-east-1b"
 }
-
+ */
 # resource "aws_instance" "jump_e1_2" {
 #   provider                    = aws.use1
 #   ami                         = data.aws_ami.rhel9_use1.id
