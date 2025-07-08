@@ -2,8 +2,9 @@
 # to AWS with the permissions set in the AWS policy.
 #
 resource "tfe_variable_set" "aws_variable_set" {
-  name   = var.tfc_variable_set_name
-  global = false
+  name        = var.tfc_variable_set_name
+  global      = false
+  description = "Managed from aws-core-infra repo/workspace"
 }
 
 # The following variables must be set to allow runs
