@@ -1,4 +1,4 @@
 locals {
   jump_instance_type = "t3a.small"
-  num_agent_vms      = 2
+  num_agent_vms      = 1
 }
