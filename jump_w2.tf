@@ -53,7 +53,7 @@ resource "aws_instance" "jump_w2" {
     TTL   = 0
   }
 
-  disable_api_termination = true
+  # disable_api_termination = true
 
   lifecycle {
     ignore_changes = [ami]
