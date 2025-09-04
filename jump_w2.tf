@@ -52,6 +52,9 @@ resource "aws_instance" "jump_w2" {
     owner = "nick.philbrook@hashicorp.com",
     TTL   = 0
   }
+
+  disable_api_termination = true
+
   lifecycle {
     ignore_changes = [ami]
   }
