@@ -72,7 +72,9 @@ resource "aws_route53_record" "jump_w2" {
 resource "aws_vpc" "w2_2" {
   provider   = aws.usw2
   cidr_block = "10.6.0.0/16"
-
+  tags = {
+    Name = "w2-nondefault2"
+  }
 }
 
 resource "aws_internet_gateway" "w2_2" {
@@ -123,6 +125,9 @@ resource "aws_subnet" "w2_2" {
 resource "aws_vpc" "w2_3" {
   provider   = aws.usw2
   cidr_block = "10.7.0.0/16"
+  tags = {
+    Name = "w2-nondefault3"
+  }
 }
 
 resource "aws_internet_gateway" "w2_3" {
