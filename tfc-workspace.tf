@@ -30,3 +30,13 @@ resource "tfe_variable" "tfc_aws_role_arn" {
 
   description = "The AWS role arn runs will use to authenticate. FOO."
 }
+
+# For cross-cloud DNS crap
+data "tfe_project" "azure" {
+  name = "azure"
+}
+
+resource "tfe_project_variable_set" "azure" {
+  project_id      = data.tfe_project.azure.id
+  variable_set_id = tfe_variable_set.aws_variable_set.id
+}
