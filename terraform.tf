@@ -14,5 +14,9 @@ terraform {
       source  = "hashicorp/tls"
       version = "~>4.0"
     }
+    hcp = {
+      source  = "hashicorp/hcp"
+      version = "~>0.111"
+    }
   }
 }

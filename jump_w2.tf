@@ -1,3 +1,45 @@
+data "aws_iam_policy_document" "agent_assume_policy" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+data "aws_iam_policy_document" "agent_policy" {
+  statement {
+    effect    = "Allow"
+    actions   = ["secretsmanager:GetSecretValue"]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "agent_policy" {
+  name   = "agent_policy"
+  policy = data.aws_iam_policy_document.agent_policy.json
+}
+
+resource "aws_iam_role" "agent_role" {
+  name               = "agent_role"
+  path               = "/"
+  assume_role_policy = data.aws_iam_policy_document.agent_assume_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "agent_policy_attachment" {
+  role       = aws_iam_role.agent_role.name
+  policy_arn = aws_iam_policy.agent_policy.arn
+}
+
+resource "aws_iam_instance_profile" "agent_profile" {
+  name = "agent_profile"
+  role = aws_iam_role.agent_role.name
+}
+
 # Shouldn't need this, all egress above?
 # resource "aws_security_group" "allow_vault_w2" {
 #   provider    = aws.usw2
@@ -5,32 +47,32 @@
 #   description = "Allow Vault API traffic over the peering connection"
 # }
 
-data "aws_ami" "rhel9_w2" {
-  provider    = aws.usw2
-  most_recent = true
+# data "aws_ami" "rhel9_w2" {
+#   provider    = aws.usw2
+#   most_recent = true
 
-  filter {
-    name   = "name"
-    values = ["RHEL-9*"]
-  }
+#   filter {
+#     name   = "name"
+#     values = ["RHEL-9*"]
+#   }
 
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
+#   filter {
+#     name   = "virtualization-type"
+#     values = ["hvm"]
+#   }
 
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
+#   filter {
+#     name   = "root-device-type"
+#     values = ["ebs"]
+#   }
 
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
+#   filter {
+#     name   = "architecture"
+#     values = ["x86_64"]
+#   }
 
-  owners = ["309956199498"] # Red Hat
-}
+#   owners = ["309956199498"] # Red Hat
+# }
 
 # Create AWS keypair
 resource "aws_key_pair" "acme_w2" {
@@ -43,8 +85,9 @@ EOF
 
 resource "aws_instance" "jump_w2" {
   provider                    = aws.usw2
-  ami                         = data.aws_ami.rhel9_w2.id
+  ami                         = data.hcp_packer_artifact.bastion.external_identifier
   associate_public_ip_address = true
+  iam_instance_profile        = aws_iam_instance_profile.agent_profile.name
   instance_type               = local.jump_instance_type
   key_name                    = aws_key_pair.acme_w2.key_name
   vpc_security_group_ids      = [aws_security_group.allow_ssh_w2.id]
@@ -53,11 +96,15 @@ resource "aws_instance" "jump_w2" {
     TTL   = 0
   }
 
+  metadata_options {
+    instance_metadata_tags = "enabled"
+  }
+
   # disable_api_termination = true
 
-  lifecycle {
-    ignore_changes = [ami]
-  }
+  # Gonna do double duty here - jump box and agent host
+  user_data                   = templatefile("${path.module}/agent_user_data.tpl", { num_agents = 2 })
+  user_data_replace_on_change = true
 }
 
 resource "aws_route53_record" "jump_w2" {

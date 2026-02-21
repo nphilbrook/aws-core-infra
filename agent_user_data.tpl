@@ -1,22 +1,3 @@
-Content-Type: multipart/mixed; boundary="//"
-MIME-Version: 1.0
-
---//
-Content-Type: text/cloud-config; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="cloud-config.txt"
-
-#cloud-config
-cloud_final_modules:
-- [scripts-user, always]
---//
-Content-Type: text/x-shellscript; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename="userdata.txt"
-
 #!/bin/bash
 
 dnf install -y git awscli docker
@@ -31,8 +12,8 @@ SECRET_DATA=$(aws secretsmanager get-secret-value --secret-id tfc-agent-token)
 export TFC_AGENT_TOKEN=$(echo $SECRET_DATA | jq -r .SecretString)
 export TFC_AGENT_NAME=$(hostname)-$1
 export TFC_AGENT_AUTO_UPDATE=disabled
-# Current as of 2025-05-14
-export VERSION=1.22.2
+# Current as of 2026-02-21
+export VERSION=1.28.3
 docker run -e TFC_AGENT_TOKEN -e TFC_AGENT_NAME -e TFC_AGENT_AUTO_UPDATE docker.io/hashicorp/tfc-agent:$VERSION
 EOF
 
@@ -63,4 +44,3 @@ do
     sudo systemctl enable tfc-agent@$i.service
     sudo systemctl start tfc-agent@$i.service
 done
---//--
