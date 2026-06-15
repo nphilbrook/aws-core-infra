@@ -97,7 +97,8 @@ resource "aws_instance" "jump_w2" {
   }
 
   metadata_options {
-    instance_metadata_tags = "enabled"
+    instance_metadata_tags      = "enabled"
+    http_tokens                 = "required"
   }
 
   # disable_api_termination = true
